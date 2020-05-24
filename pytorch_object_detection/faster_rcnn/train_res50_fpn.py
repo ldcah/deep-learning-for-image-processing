@@ -26,7 +26,8 @@ def create_model(num_classes):
 
 
 def main(parser_data):
-    device = torch.device(parser_data.device if torch.cuda.is_available() else "cpu")
+    # device = torch.device(parser_data.device if torch.cuda.is_available() else "cpu")
+    device = torch.device("cpu")
     print(device)
 
     data_transform = {
@@ -38,9 +39,9 @@ def main(parser_data):
     VOC_root = parser_data.data_path
     # load train data set
     train_data_set = VOC2012DataSet(VOC_root, data_transform["train"], True)
-    # 注意这里的collate_fn是自定义的，因为读取的数据包括image和targets，不能直接使用默认的方法合成batch
+    # 注意这里的collate_fn是自定义的，因为读取的数据包括image和targets，不能直接使用默认的方法合成batch  batch_size=4 修改为1 2020-05-23 ludc
     train_data_loader = torch.utils.data.DataLoader(train_data_set,
-                                                    batch_size=4,
+                                                    batch_size=1,
                                                     shuffle=True,
                                                     num_workers=0,
                                                     collate_fn=utils.collate_fn)

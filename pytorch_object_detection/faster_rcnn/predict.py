@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 
 def create_model(num_classes):
-    # mobileNetv2+faster_RCNN
+    # # mobileNetv2+faster_RCNN
     # backbone = MobileNetV2().features
     # backbone.out_channels = 1280
     #
@@ -28,7 +28,7 @@ def create_model(num_classes):
     #                    rpn_anchor_generator=anchor_generator,
     #                    box_roi_pool=roi_pooler)
 
-    # resNet50+fpn+faster_RCNN
+    #     # resNet50+fpn+faster_RCNN
     backbone = resnet50_fpn_backbone()
     model = FasterRCNN(backbone=backbone, num_classes=num_classes)
 

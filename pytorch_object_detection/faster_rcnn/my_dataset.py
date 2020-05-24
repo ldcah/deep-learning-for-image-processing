@@ -10,7 +10,7 @@ class VOC2012DataSet(Dataset):
     """读取解析PASCAL VOC2012数据集"""
 
     def __init__(self, voc_root, transforms, train_set=True):
-        self.root = os.path.join(voc_root, "VOCdevkit", "VOC2012")
+        self.root = os.path.join(voc_root, r"E:\DataSet\VOCtrainval_11-May-2012\VOCdevkit", "VOC2012")
         self.img_root = os.path.join(self.root, "JPEGImages")
         self.annotations_root = os.path.join(self.root, "Annotations")
 

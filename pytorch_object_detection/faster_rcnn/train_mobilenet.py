@@ -18,7 +18,7 @@ def create_model(num_classes):
                                         aspect_ratios=((0.5, 1.0, 2.0),))
 
     roi_pooler = torchvision.ops.MultiScaleRoIAlign(featmap_names=['0'],  # 在哪些特征层上进行预测
-                                                    output_size=[7, 7],   # roi_pooling输出特征矩阵尺寸
+                                                    output_size=[7, 7],  # roi_pooling输出特征矩阵尺寸
                                                     sampling_ratio=2)  # 采样率
 
     model = FasterRCNN(backbone=backbone,
@@ -30,7 +30,9 @@ def create_model(num_classes):
 
 
 def main():
+    torch.cuda.empty_cache()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cpu")
     print(device)
 
     # 检查保存权重文件夹是否存在，不存在则创建
@@ -46,9 +48,9 @@ def main():
     VOC_root = os.getcwd()
     # load train data set
     train_data_set = VOC2012DataSet(VOC_root, data_transform["train"], True)
-    # 注意这里的collate_fn是自定义的，因为读取的数据包括image和targets，不能直接使用默认的方法合成batch
+    # 注意这里的collate_fn是自定义的，因为读取的数据包括image和targets，不能直接使用默认的方法合成batch  batch_size=8, 修改为1
     train_data_loader = torch.utils.data.DataLoader(train_data_set,
-                                                    batch_size=8,
+                                                    batch_size=1,
                                                     shuffle=True,
                                                     num_workers=0,
                                                     collate_fn=utils.collate_fn)
