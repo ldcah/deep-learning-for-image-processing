@@ -90,7 +90,11 @@ while True:
                      predict_scores,
                      category_index,
                      thresh=0.5,
-                     line_thickness=5)
+                     line_thickness=2)
             plt.imshow(original_img)
             plt.show()
+            print(len(predict_classes))
+            print(predict_classes)
+            print(predict_scores)
+            print(predict_boxes)
 
