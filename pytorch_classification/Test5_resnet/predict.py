@@ -12,7 +12,7 @@ data_transform = transforms.Compose(
      transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
 
 # load image
-img = Image.open("../tulip.jpg")
+img = Image.open("../130304.bmp")
 plt.imshow(img)
 # [N, C, H, W]
 img = data_transform(img)
@@ -28,7 +28,7 @@ except Exception as e:
     exit(-1)
 
 # create model
-model = resnet34(num_classes=5)
+model = resnet34(num_classes=4)
 # load model weights
 model_weight_path = "./resNet34.pth"
 model.load_state_dict(torch.load(model_weight_path))

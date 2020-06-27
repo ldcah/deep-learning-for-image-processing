@@ -7,36 +7,46 @@ import os
 import torch.optim as optim
 from model import resnet34, resnet101
 
-
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
 
-data_transform = {
-    "train": transforms.Compose([transforms.RandomResizedCrop(224),
-                                 transforms.RandomHorizontalFlip(),
-                                 transforms.ToTensor(),
-                                 transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])]),
-    "val": transforms.Compose([transforms.Resize(256),
-                               transforms.CenterCrop(224),
-                               transforms.ToTensor(),
-                               transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])}
+save_weights_name = "weights_res.pth"
 
+# data_transform = {
+#     "train": transforms.Compose([transforms.RandomResizedCrop(224),
+#                                  transforms.RandomHorizontalFlip(),
+#                                  transforms.ToTensor(),
+#                                  transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])]),
+#     "val": transforms.Compose([transforms.Resize(256),
+#                                transforms.CenterCrop(224),
+#                                transforms.ToTensor(),
+#                                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])}
+
+
+data_transform = {
+    "train": transforms.Compose([transforms.ToTensor(),
+                                 transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])]),
+    "val": transforms.Compose([transforms.ToTensor(),
+                               transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])}
 
 data_root = os.path.abspath(os.path.join(os.getcwd(), "../.."))  # get data root path
 image_path = data_root + "/data_set/flower_data/"  # flower data set path
 
-train_dataset = datasets.ImageFolder(root=image_path+"train",
+train_dataset = datasets.ImageFolder(root=image_path + "train",
                                      transform=data_transform["train"])
 train_num = len(train_dataset)
 
 # {'daisy':0, 'dandelion':1, 'roses':2, 'sunflower':3, 'tulips':4}
+
+# json 序列化类别
 flower_list = train_dataset.class_to_idx
 cla_dict = dict((val, key) for key, val in flower_list.items())
 # write dict into json file
-json_str = json.dumps(cla_dict, indent=4)
-with open('class_indices.json', 'w') as json_file:
+json_str = json.dumps(cla_dict, indent=4, ensure_ascii=False)
+with open(save_weights_name + '.json', 'w', encoding="utf-8") as json_file:
     json_file.write(json_str)
 
+epochs = 1
 batch_size = 16
 train_loader = torch.utils.data.DataLoader(train_dataset,
                                            batch_size=batch_size, shuffle=True,
@@ -57,15 +67,16 @@ model = resnet34()
 #     param.requires_grad = False
 # change fc layer structure
 inchannel = model.fc.in_features
-model.fc = nn.Linear(inchannel, 4)
+# 分类
+model.fc = nn.Linear(inchannel, cla_dict.__len__())
 model.to(device)
 
 loss_function = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
 best_acc = 0.0
-save_path = './resNet34.pth'
-for epoch in range(200):
+save_path = './' + save_weights_name
+for epoch in range(epochs):
     # train
     model.train()
     running_loss = 0.0
@@ -80,10 +91,10 @@ for epoch in range(200):
         # print statistics
         running_loss += loss.item()
         # print train process
-        rate = (step+1)/len(train_loader)
+        rate = (step + 1) / len(train_loader)
         a = "*" * int(rate * 50)
         b = "." * int((1 - rate) * 50)
-        print("\rtrain loss: {:^3.0f}%[{}->{}]{:.4f}".format(int(rate*100), a, b, loss), end="")
+        print("\rtrain loss: {:^3.0f}%[{}->{}]{:.4f}".format(int(rate * 100), a, b, loss), end="")
     print()
 
     # validate
@@ -104,5 +115,3 @@ for epoch in range(200):
               (epoch + 1, running_loss / step, val_accurate))
 
 print('Finished Training')
-
-

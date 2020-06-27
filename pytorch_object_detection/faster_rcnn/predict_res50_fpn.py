@@ -43,7 +43,7 @@ print(device)
 model = create_model(num_classes=21)
 
 # load train weights
-train_weights = "./save_weights/model.pth"
+train_weights = "./save_weights/resNetFpn-model-0.pth"
 model.load_state_dict(torch.load(train_weights)["model"])
 model.to(device)
 
@@ -53,35 +53,57 @@ try:
     json_file = open('./pascal_voc_classes.json', 'r')
     class_dict = json.load(json_file)
     category_index = {v: k for k, v in class_dict.items()}
+
+
 except Exception as e:
     print(e)
     exit(-1)
 
-# load image
-original_img = Image.open("./test.jpg")
+classNames = ["background"]
+for k, v in class_dict.items():
+    classNames.append(k)
+print(classNames)
 
-# from pil image to tensor, do not normalize image
-data_transform = transforms.Compose([transforms.ToTensor()])
-img = data_transform(original_img)
-# expand batch dimension
-img = torch.unsqueeze(img, dim=0)
+while True:
+    img = input('Input image filename:')
+    try:
+        original_img = Image.open(img)
+    except:
+        print('Open Error! Try again!')
+        continue
+    else:
+        # from pil image to tensor, do not normalize image
+        data_transform = transforms.Compose([transforms.ToTensor()])
+        img = data_transform(original_img)
+        # expand batch dimension
+        img = torch.unsqueeze(img, dim=0)
 
-model.eval()
-with torch.no_grad():
-    predictions = model(img.to(device))[0]
-    predict_boxes = predictions["boxes"].to("cpu").numpy()
-    predict_classes = predictions["labels"].to("cpu").numpy()
-    predict_scores = predictions["scores"].to("cpu").numpy()
+    # from pil image to tensor, do not normalize image
+    data_transform = transforms.Compose([transforms.ToTensor()])
+    img = data_transform(original_img)
+    # expand batch dimension
+    img = torch.unsqueeze(img, dim=0)
 
-    if len(predict_boxes) == 0:
-        print("没有检测到任何目标!")
+    model.eval()
+    with torch.no_grad():
+        predictions = model(img.to(device))[0]
+        predict_boxes = predictions["boxes"].to("cpu").numpy()
+        predict_classes = predictions["labels"].to("cpu").numpy()
+        predict_scores = predictions["scores"].to("cpu").numpy()
 
-    draw_box(original_img,
-             predict_boxes,
-             predict_classes,
-             predict_scores,
-             category_index,
-             thresh=0.5,
-             line_thickness=5)
-    plt.imshow(original_img)
-    plt.show()
+        if len(predict_boxes) == 0:
+            print("没有检测到任何目标!")
+
+        draw_box(original_img,
+                 predict_boxes,
+                 predict_classes,
+                 predict_scores,
+                 category_index,
+                 thresh=0.5,
+                 line_thickness=1)
+        plt.imshow(original_img)
+        plt.show()
+        print(len(predict_classes))
+        print(predict_classes)
+        print(predict_scores)
+        print(predict_boxes)

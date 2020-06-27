@@ -26,8 +26,8 @@ def create_model(num_classes):
 
 
 def main(parser_data):
-    # device = torch.device(parser_data.device if torch.cuda.is_available() else "cpu")
-    device = torch.device("cpu")
+    device = torch.device(parser_data.device if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cpu")
     print(device)
 
     data_transform = {
@@ -52,7 +52,7 @@ def main(parser_data):
                                                       batch_size=2,
                                                       shuffle=False,
                                                       num_workers=0,
-                                                      collate_fn=utils.collate_fn)
+                                                      collate_fn=utils.collate_fn)# batch_size=2 修改为1
 
     # create model num_classes equal background + 20 classes
     model = create_model(num_classes=21)
@@ -85,8 +85,8 @@ def main(parser_data):
         # update the learning rate
         lr_scheduler.step()
 
-        # evaluate on the test dataset
-        utils.evaluate(model, val_data_set_loader, device=device)
+        # # evaluate on the test dataset 2020-05-25 暂时
+        # utils.evaluate(model, val_data_set_loader, device=device)
 
         # save weights
         save_files = {
