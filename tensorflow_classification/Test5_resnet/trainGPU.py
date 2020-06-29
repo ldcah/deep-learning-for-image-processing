@@ -119,7 +119,7 @@ def train_step(images, labels):
 
 
 @tf.function
-def test_step(images, labels):
+def _test_step(images, labels):
     output = model(images, training=False)
     t_loss = loss_object(labels, output)
 
@@ -144,7 +144,7 @@ for epoch in range(1, epochs+1):
     print(time.perf_counter()-t1)
 
     for index, (images, labels) in enumerate(val_dataset):
-        test_step(images, labels)
+        _test_step(images, labels)
         if index+1 == val_step_num:
             break
 

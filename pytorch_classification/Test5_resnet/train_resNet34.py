@@ -23,6 +23,7 @@ save_weights_name = "weights_res.pth"
 #                                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])}
 
 
+# 固定尺寸大小的图像
 data_transform = {
     "train": transforms.Compose([transforms.ToTensor(),
                                  transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])]),

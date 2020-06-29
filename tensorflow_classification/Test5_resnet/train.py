@@ -63,8 +63,8 @@ total_val = val_data_gen.n
 
 feature = resnet50(num_classes=5, include_top=False)
 # feature.build((None, 224, 224, 3))  # when using subclass model
-feature.load_weights('pretrain_weights.ckpt')
-feature.trainable = False
+# feature.load_weights('pretrain_weights.ckpt')
+# feature.trainable = False
 feature.summary()
 
 model = tf.keras.Sequential([feature,
