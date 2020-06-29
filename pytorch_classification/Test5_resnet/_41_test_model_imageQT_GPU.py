@@ -1,15 +1,14 @@
+import json
 import os
 import sys
-from configparser import ConfigParser
-
+import torch
+from PIL import Image
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import *
-import torch
-from model import resnet34
-from PIL import Image
 from torchvision import transforms
-import matplotlib.pyplot as plt
-import json
+
+from model import resnet34
+
 
 class Picture(QWidget):
     def __init__(self):
