@@ -10,6 +10,8 @@ from torchvision import transforms
 from model import resnet34
 
 
+
+
 class Picture(QWidget):
     def __init__(self):
         super(Picture, self).__init__()
