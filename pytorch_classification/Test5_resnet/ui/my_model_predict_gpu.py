@@ -3,7 +3,7 @@ import time
 import torch
 from PIL import Image
 from torchvision import transforms
-from model import resnet34
+from model import resnet34, resnet50
 
 
 class MyModel4Prdict():
@@ -27,7 +27,10 @@ class MyModel4Prdict():
         self.class_indict = json.load(json_filef)
 
         # create model
-        self.model = resnet34(num_classes=len(self.class_indict))
+        if (str.find(model_weight_path, "res50.pth") > 0):
+            self.model = resnet50(num_classes=len(self.class_indict))  # res50
+        else:
+            self.model = resnet34(num_classes=len(self.class_indict))
         # load model weights
         self.model.load_state_dict(torch.load(model_weight_path))
         self.model.eval()
