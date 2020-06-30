@@ -5,12 +5,12 @@ import json
 import matplotlib.pyplot as plt
 import os
 import torch.optim as optim
-from model import resnet34, resnet101
+from model import resnet34, resnet101,resnet50
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
 
-save_weights_name = "weights_res.pth"
+save_weights_name = "weights_res50.pth"
 
 # data_transform = {
 #     "train": transforms.Compose([transforms.RandomResizedCrop(224),
@@ -47,7 +47,7 @@ with open(save_weights_name + '.json', 'w', encoding="utf-8") as json_file:
     json_file.write(json_str)
 
 epochs = 100
-batch_size = 16
+batch_size = 9
 train_loader = torch.utils.data.DataLoader(train_dataset,
                                            batch_size=batch_size, shuffle=True,
                                            num_workers=0)
@@ -59,7 +59,7 @@ validate_loader = torch.utils.data.DataLoader(validate_dataset,
                                               batch_size=batch_size, shuffle=False,
                                               num_workers=0)
 
-model = resnet34()
+model = resnet50()
 # load pretrain weights
 # model_weight_path = "./resnet34-pre.pth"
 # missing_keys, unexpected_keys = net.load_state_dict(torch.load(model_weight_path), strict=False)

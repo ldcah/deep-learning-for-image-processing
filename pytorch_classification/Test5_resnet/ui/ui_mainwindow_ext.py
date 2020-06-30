@@ -37,8 +37,6 @@ class Ui_MainWindow_Ext(QMainWindow, Ui_MainWindow):
                 self.lbl4ModelName.setText("模型加载中.....")
                 self.my_model_pre = MyModel4Prdict(modelName, modelName + ".json")
                 self.lbl4ModelName.setText("模型加载完成。" + modelName)
-            else:
-                self.lbl4ModelName.setText("未加载权重数据！")
         except Exception as exc:
             print("{0}{1}".format(type(exc).__name__, str(exc)))
             self.lbl4ModelName.setText("加载模型异常：" + modelName)

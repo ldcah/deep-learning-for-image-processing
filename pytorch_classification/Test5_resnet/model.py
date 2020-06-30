@@ -47,9 +47,9 @@ class Bottleneck(nn.Module):
                                kernel_size=3, stride=stride, bias=False, padding=1)
         self.bn2 = nn.BatchNorm2d(out_channel)
         # -----------------------------------------
-        self.conv3 = nn.Conv2d(in_channels=out_channel, out_channels=out_channel*self.expansion,
+        self.conv3 = nn.Conv2d(in_channels=out_channel, out_channels=out_channel * self.expansion,
                                kernel_size=1, stride=1, bias=False)  # unsqueeze channels
-        self.bn3 = nn.BatchNorm2d(out_channel*self.expansion)
+        self.bn3 = nn.BatchNorm2d(out_channel * self.expansion)
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
 
@@ -136,6 +136,10 @@ class ResNet(nn.Module):
 
 def resnet34(num_classes=1000, include_top=True):
     return ResNet(BasicBlock, [3, 4, 6, 3], num_classes=num_classes, include_top=include_top)
+
+
+def resnet50(num_classes=1000, include_top=True):
+    return ResNet(Bottleneck, [3, 4, 6, 3], num_classes=num_classes, include_top=include_top)
 
 
 def resnet101(num_classes=1000, include_top=True):
