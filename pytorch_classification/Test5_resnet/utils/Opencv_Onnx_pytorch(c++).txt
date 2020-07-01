@@ -1,0 +1,96 @@
+#include "pch.h"
+#include <iostream>
+#include<opencv2\opencv.hpp>
+#include<opencv2\dnn.hpp>
+#include<opencv2\imgproc.hpp>
+#include <iostream>
+#include <cmath>
+using namespace std;
+using namespace cv;
+
+
+double* softmax(float  src[],int size, int & maxIndex,double & maxPro)
+{
+	maxIndex = 0;
+	double * temp  = new double[size];
+
+	double sum = 0;
+	for (int i = 0; i < size; i++)
+	{
+		temp[i] = exp(src[i]);
+
+		sum += temp[i];
+	}
+
+	//最高概率值
+	maxPro = -1;
+	double tempPre = 0;
+	for (int i = 0; i < size; i++)
+	{
+		tempPre = temp[i] / sum;
+		temp[i] = tempPre;
+
+		if (maxPro < tempPre)
+		{
+			maxIndex = i;
+			maxPro = tempPre;
+		}
+
+		std::cout << tempPre << ",";
+	}
+	cout << endl;
+	return temp;
+}
+
+int main() {
+
+	// 初始化
+	String prototxt = "E:\\pytorch_refuse\\weights_res_01.pth.onnx";
+	String ImgName = "E:\\pytorch_refuse\\2.bmp";
+
+	dnn::Net net = cv::dnn::readNetFromONNX(prototxt);
+	net.setPreferableBackend(0);
+	net.setPreferableTarget(0);
+
+	Mat img = cv::imread(ImgName);
+	cv::Mat blob;
+	dnn::blobFromImage(img,blob,1.0/255, Size(), Scalar(), true, false,5);//
+
+
+
+	net.setInput(blob);
+
+	clock_t tm = clock();
+	//dnn用.forward方法来向前传播我们的图像，获取分类结果--------------------------
+	Mat output = net.forward();
+	tm = clock() - tm;
+	cout << tm << endl;
+
+	// 读取分类索引，最大与最小值
+	Mat probMat = output.reshape(1, 1); //reshape the blob to 1x1000 matrix // 1000个分类
+	Point classNumber;
+	double classProb;
+	minMaxLoc(probMat, NULL, &classProb, NULL, &classNumber); // 可能性最大的一个
+
+
+	//分五类
+	float* row1 = probMat.ptr<float>(0);//获取第一行首地址
+	float b[5] = { 0 };
+	for (int i = 0; i < 5; i++)
+	{
+		b[i] = row1[i];//第一行的第i个数赋给b[i]
+		//std::cout << row1[i]<<",";
+	}
+	cout << endl;
+
+	int index=0;
+	double pro = 0;
+	softmax(b, 5, index, pro);
+	cout << index << " " << pro << endl;
+
+	imshow("image", img);
+	waitKey(0);
+	return 0;
+}
+
+
