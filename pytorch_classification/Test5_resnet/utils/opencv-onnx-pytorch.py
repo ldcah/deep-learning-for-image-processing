@@ -4,7 +4,7 @@ import torch
 from PIL import Image
 
 data_transform = transforms.Compose([transforms.ToTensor()])
-cvNet = cv.dnn.readNetFromONNX('weights_res_01.pth.onnx')
+cvNet = cv.dnn.readNetFromONNX('..\weights_res.pth.onnx')
 imgpath = r'E:\pytorch_refuse\2.bmp'
 img = cv.imread(imgpath)
 
